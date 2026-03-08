@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription Flow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  </head>
+
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md bg-white p-6 rounded-xl shadow">
+      <!-- ================= PLAN SECTION ================= -->
+      <div id="plan-section">
+        <h2 class="text-xl font-semibold text-amber-950">
+          Choose Your Subscription 💳
+        </h2>
+
+        <p class="mt-2 text-sm text-amber-900">
+          Select a plan to continue using the software.
+        </p>
+
+        <div id="plans-container" class="mt-6 space-y-3"></div>
+      </div>
+
+      <!-- ================= SIGNUP SECTION ================= -->
+
+      <div id="signup-section" class="hidden">
+        <h2 class="text-xl font-semibold text-amber-950">Sign Up</h2>
+
+        <div class="mt-5 space-y-3">
+          <input
+            id="name"
+            placeholder="Name"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+
+          <input
+            id="email"
+            placeholder="Email"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+
+          <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+
+          <input
+            id="number"
+            placeholder="Mobile Number"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+
+          <input
+            id="address"
+            placeholder="Address"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+
+          <input
+            id="profession"
+            placeholder="Profession / Student"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+
+          <input
+            id="institution"
+            placeholder="Institution / University"
+            class="w-full border rounded-lg px-3 py-2"
+          />
+        </div>
+
+        <button
+          id="signup-submit"
+          onclick="submitSignup()"
+          class="mt-6 w-full bg-amber-900 text-white py-2.5 rounded-lg hover:bg-amber-950"
+        >
+          Continue to Payment
+        </button>
+
+        <button
+          onclick="goBackToPlans()"
+          class="mt-3 w-full bg-gray-100 py-2 rounded-lg"
+        >
+          Back
+        </button>
+      </div>
+
+      <!-- ================= PAYMENT SECTION ================= -->
+
+      <div id="payment-section" class="hidden">
+        <h2 class="text-xl font-semibold text-amber-950">
+          Complete Payment 💰
+        </h2>
+
+        <p class="mt-2 text-sm text-amber-900">
+          Scan QR and enter transaction ID
+        </p>
+
+        <div class="flex justify-center mt-5">
+          <canvas id="qr"></canvas>
+        </div>
+
+        <p class="text-center text-sm mt-2">
+          UPI ID: <span id="upi-id"></span>
+        </p>
+
+        <input
+          id="transaction-id"
+          placeholder="Enter Transaction ID"
+          class="w-full border rounded-lg px-3 py-2 mt-5"
+        />
+
+        <button
+          onclick="submitPayment()"
+          class="mt-5 w-full bg-amber-900 text-white py-2.5 rounded-lg"
+        >
+          Submit Payment
+        </button>
+      </div>
+
+      <!-- ================= THANK YOU SECTION ================= -->
+
+      <div id="thankyou-section" class="hidden text-center">
+        <h2 class="text-xl font-semibold text-green-700">Thank You 🎉</h2>
+
+        <p class="mt-4 text-gray-700">
+          After 1 hour we will accept your payment request and you will receive
+          an email with the access link.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      /* ================= PLAN DATA ================= */
+
+      const PLANS = [
+        { id: 1, title: "1 Month", price: 149, displayPrice: "₹149" },
+        { id: 2, title: "6 Months", price: 749, displayPrice: "₹749" },
+        { id: 3, title: "1 Year", price: 1499, displayPrice: "₹1499" },
+      ];
+
+      const BANKDETAILS = {
+        upiId: "chaudhuri.nil@okicici",
+        payeeName: "Subscription",
+        paymentMode: "INR",
+      };
+
+      //   const VITE_API_URL = "https://snake-bite-game-backend.vercel.app/api";
+      const VITE_API_URL = "http://localhost:3030/api";
+
+      let selectedPlan = null;
+      let currentUserId = null;
+      let currentGameName = null;
+
+      /* ================= LOAD PLANS ================= */
+
+      const container = document.getElementById("plans-container");
+
+      PLANS.forEach((plan) => {
+        const btn = document.createElement("button");
+
+        btn.className =
+          "w-full border rounded-lg p-3 flex justify-between hover:bg-amber-50";
+
+        btn.innerHTML = `<span>${plan.title}</span>
+<span class="font-semibold">${plan.displayPrice}</span>`;
+
+        btn.onclick = () => selectPlan(plan);
+
+        container.appendChild(btn);
+      });
+
+      function getGameNameFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const value = params.get("gameName");
+
+        if (value) {
+          currentGameName = value;
+        } else {
+          currentGameName = "snake game";
+        }
+      }
+
+      getGameNameFromURL();
+
+      /* ================= SELECT PLAN ================= */
+
+      function selectPlan(plan) {
+        selectedPlan = plan;
+
+        document.getElementById("plan-section").classList.add("hidden");
+        document.getElementById("signup-section").classList.remove("hidden");
+      }
+
+      /* ================= BACK BUTTON ================= */
+
+      function goBackToPlans() {
+        document.getElementById("signup-section").classList.add("hidden");
+        document.getElementById("plan-section").classList.remove("hidden");
+      }
+
+      /* ================= SIGNUP SUBMIT ================= */
+
+      async function submitSignup() {
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const number = document.getElementById("number").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const profession = document.getElementById("profession").value.trim();
+        const institution = document.getElementById("institution").value.trim();
+
+        // required validation
+        if (!name || !email || !password || !number || !address) {
+          alert("Please fill all required fields");
+          return;
+        }
+
+        const userData = {
+          user_name: name,
+          user_email: email,
+          user_password: password,
+          user_number: number,
+          user_address: address,
+          user_profession: profession || "",
+          user_institution: institution || "",
+        };
+
+        const btn = document.getElementById("signup-submit");
+
+        try {
+          btn.disabled = true;
+          btn.innerText = "Creating Account...";
+
+          const result = await registerUser(userData);
+          currentUserId = result.user.id;
+
+          console.log("User registered:", result);
+
+          // hide signup section
+          document.getElementById("signup-section").classList.add("hidden");
+
+          // show payment section
+          document.getElementById("payment-section").classList.remove("hidden");
+
+          generateQR();
+        } catch (error) {
+          alert(error.message);
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "Sign Up";
+        }
+      }
+      /* ================= registration api integration ================= */
+      async function registerUser(userData) {
+        try {
+          const response = await fetch(`${VITE_API_URL}/users/register`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.message || "Something went wrong");
+          }
+
+          return result;
+        } catch (error) {
+          throw error;
+        }
+      }
+
+      /* ================= GENERATE QR ================= */
+
+      function generateQR() {
+        const upiString = `upi://pay?pa=${BANKDETAILS.upiId}&pn=${BANKDETAILS.payeeName}&am=${selectedPlan.price}&cu=INR`;
+
+        document.getElementById("upi-id").innerText = BANKDETAILS.upiId;
+
+        QRCode.toCanvas(document.getElementById("qr"), upiString);
+      }
+
+      /* ================= PAYMENT SUBMIT ================= */
+
+      async function submitPayment() {
+        const txnId = document.getElementById("transaction-id").value.trim();
+
+        if (!txnId) {
+          alert("Please enter transaction ID");
+          return;
+        }
+
+        try {
+          const response = await fetch(`${VITE_API_URL}/payment/subscription`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: currentUserId,
+              amount: selectedPlan.price,
+              duration: selectedPlan.title,
+              type: currentGameName,
+              subscriptionAt: Date.now().toString(),
+              transactionId: txnId,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            alert(data.message || "Payment submission failed");
+            return;
+          }
+
+          // Hide payment section
+          document.getElementById("payment-section").classList.add("hidden");
+
+          // Show thank you page
+          document
+            .getElementById("thankyou-section")
+            .classList.remove("hidden");
+        } catch (error) {
+          console.error("Payment API error:", error);
+          alert("Something went wrong. Please try again.");
+        }
+      }
+    </script>
+  </body>
+</html>

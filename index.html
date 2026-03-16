@@ -28,49 +28,80 @@
       <div id="signup-section" class="hidden">
         <h2 class="text-xl font-semibold text-amber-950">Sign Up</h2>
 
-        <div class="mt-5 space-y-3">
-          <input
-            id="name"
-            placeholder="Name"
-            class="w-full border rounded-lg px-3 py-2"
-          />
+        <div class="mt-5 space-y-4">
+          <div>
+            <label class="text-sm font-medium"
+              >Name <span class="text-red-500">*</span></label
+            >
+            <input
+              id="name"
+              placeholder="Enter your name"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-amber-900"
+            />
+          </div>
 
-          <input
-            id="email"
-            placeholder="Email"
-            class="w-full border rounded-lg px-3 py-2"
-          />
+          <div>
+            <label class="text-sm font-medium"
+              >Email <span class="text-red-500">*</span></label
+            >
+            <input
+              id="email"
+              placeholder="Enter your email"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-amber-900"
+            />
+          </div>
 
-          <input
-            id="password"
-            type="password"
-            placeholder="Password"
-            class="w-full border rounded-lg px-3 py-2"
-          />
+          <div>
+            <label class="text-sm font-medium"
+              >Password <span class="text-red-500">*</span></label
+            >
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter password"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-amber-900"
+            />
+          </div>
 
-          <input
-            id="number"
-            placeholder="Mobile Number"
-            class="w-full border rounded-lg px-3 py-2"
-          />
+          <div>
+            <label class="text-sm font-medium"
+              >Mobile Number<span class="text-red-500">*</span></label
+            >
+            <input
+              id="number"
+              placeholder="Enter mobile number"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-amber-900"
+            />
+          </div>
 
-          <input
-            id="address"
-            placeholder="Address"
-            class="w-full border rounded-lg px-3 py-2"
-          />
+          <div>
+            <label class="text-sm font-medium"
+              >Address<span class="text-red-500">*</span></label
+            >
+            <input
+              id="address"
+              placeholder="Enter address"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-amber-900"
+            />
+          </div>
 
-          <input
-            id="profession"
-            placeholder="Profession / Student"
-            class="w-full border rounded-lg px-3 py-2"
-          />
+          <div>
+            <label class="text-sm font-medium">Profession / Student</label>
+            <input
+              id="profession"
+              placeholder="Enter profession"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-amber-900"
+            />
+          </div>
 
-          <input
-            id="institution"
-            placeholder="Institution / University"
-            class="w-full border rounded-lg px-3 py-2"
-          />
+          <div>
+            <label class="text-sm font-medium">Institution / University</label>
+            <input
+              id="institution"
+              placeholder="Enter institution"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-amber-900"
+            />
+          </div>
         </div>
 
         <button
@@ -138,9 +169,21 @@
       /* ================= PLAN DATA ================= */
 
       const PLANS = [
-        { id: 1, title: "1 Month", price: 149, displayPrice: "₹149" },
-        { id: 2, title: "6 Months", price: 749, displayPrice: "₹749" },
-        { id: 3, title: "1 Year", price: 1499, displayPrice: "₹1499" },
+        { id: 1, title: "1 Month", price: 299, displayPrice: "₹299", text: "" },
+        {
+          id: 2,
+          title: "6 Months",
+          price: 1449,
+          displayPrice: "₹1449",
+          text: "Pay for 5 months and Play for 6 months",
+        },
+        {
+          id: 3,
+          title: "1 Year",
+          price: 2999,
+          displayPrice: "₹2999",
+          text: "Pay for 10 months and Play for 12 months",
+        },
       ];
 
       const BANKDETAILS = {
@@ -164,10 +207,25 @@
         const btn = document.createElement("button");
 
         btn.className =
-          "w-full border rounded-lg p-3 flex justify-between hover:bg-amber-50";
+          "w-full border border-amber-200 rounded-xl p-4 flex items-center justify-between gap-4 bg-white transition hover:bg-amber-50 hover:shadow-md";
 
-        btn.innerHTML = `<span>${plan.title}</span>
-<span class="font-semibold">${plan.displayPrice}</span>`;
+        btn.innerHTML = `
+  <div class="flex flex-col text-left">
+    <p class="text-xs text-amber-700 font-medium">${plan.text}</p>
+    
+    <p class="text-base font-semibold text-amber-950 mt-1">
+      ${plan.title}
+    </p>
+
+    <p class="text-xs text-gray-600 mt-1 leading-relaxed">
+      (Inclusive of Snake Bite game, Bio Sorter, +3 other quizzes on Community Medicine)
+    </p>
+  </div>
+
+  <div class="text-lg font-bold text-amber-900 whitespace-nowrap">
+    ${plan.displayPrice}
+  </div>
+`;
 
         btn.onclick = () => selectPlan(plan);
 

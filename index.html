@@ -75,9 +75,7 @@
           </div>
 
           <div>
-            <label class="text-sm font-medium"
-              >Address<span class="text-red-500">*</span></label
-            >
+            <label class="text-sm font-medium">Address</label>
             <input
               id="address"
               placeholder="Enter address"
@@ -169,7 +167,7 @@
       /* ================= PLAN DATA ================= */
 
       const PLANS = [
-        { id: 1, title: "1 Month", price: 2, displayPrice: "₹2", text: "" },
+        { id: 1, title: "1 Month", price: 299, displayPrice: "₹299", text: "" },
         {
           id: 2,
           title: "6 Months",
@@ -273,7 +271,7 @@
         const institution = document.getElementById("institution").value.trim();
 
         // required validation
-        if (!name || !email || !password || !number || !address) {
+        if (!name || !email || !password || !number) {
           alert("Please fill all required fields");
           return;
         }

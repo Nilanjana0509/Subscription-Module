@@ -248,8 +248,17 @@
       function selectPlan(plan) {
         selectedPlan = plan;
 
-        document.getElementById("plan-section").classList.add("hidden");
-        document.getElementById("signup-section").classList.remove("hidden");
+        const params = new URLSearchParams(location.search);
+        const userId = params.get("userId");
+        if (userId) {
+          currentUserId = userId;
+          document.getElementById("plan-section").classList.add("hidden");
+          document.getElementById("payment-section").classList.remove("hidden");
+          generateQR();
+        } else {
+          document.getElementById("plan-section").classList.add("hidden");
+          document.getElementById("signup-section").classList.remove("hidden");
+        }
       }
 
       /* ================= BACK BUTTON ================= */
